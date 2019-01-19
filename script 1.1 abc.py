@@ -54,7 +54,6 @@ with open('movie_ID_sim_movie_ID.csv', mode='w') as e:
     w = csv.writer(e, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
     
     for movie_id in id_total:
-        similar = ' '
         id_list = []
         #if m<3:
         conn.request("GET", "/3/movie/"+movie_id+"/similar?page=1&language=en-US&api_key="+key, payload)
@@ -62,12 +61,12 @@ with open('movie_ID_sim_movie_ID.csv', mode='w') as e:
         res = conn.getresponse()
         data = res.read()
         similar = data.decode("utf-8")
-        
+        similar_total = []
         
         #k=0
         #print("\n This is the similar movies for "+movie_id)
         if "id\":" in similar:
-            similar_total = []
+            
             for line in similar.split("},{"):
                 id = line.split("id\":")[1].split(',')[0]
                 id_list.append(id)
