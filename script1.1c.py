@@ -9,7 +9,7 @@ import csv
 
 key = input("\n\nPress your API key.")
 
-conn = http.client.HTTPSConnection("api.themoviedb.org", timeout=10)
+conn = http.client.HTTPSConnection("api.themoviedb.org")
 
 payload = "{}"
 
@@ -40,7 +40,7 @@ for line in report.split("},{"):
         total.append(line_item)
         n=n+1
 
-print(n)
+print(len(id_total))
 
 with open('movie_ID_name.csv', mode='w') as f:
     w = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
@@ -52,10 +52,10 @@ with open('movie_ID_name.csv', mode='w') as f:
 
 with open('movie_ID_sim_movie_ID.csv', mode='w') as e:
     w = csv.writer(e, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-    
+    total_list = []
     for movie_id in id_total:
-        similar = ' '
         id_list = []
+        similar_total = []
         #if m<3:
         conn.request("GET", "/3/movie/"+movie_id+"/similar?page=1&language=en-US&api_key="+key, payload)
         
@@ -67,20 +67,28 @@ with open('movie_ID_sim_movie_ID.csv', mode='w') as e:
         #k=0
         #print("\n This is the similar movies for "+movie_id)
         if "id\":" in similar:
-            similar_total = []
+
             for line in similar.split("},{"):
                 id = line.split("id\":")[1].split(',')[0]
                 id_list.append(id)
+            
             if len(id_list)>5:
                 id_list = id_list[0:5]
-            for j in id_list:
-                if j<movie_id and (j in id_total):
-                    id_list.remove(j)
+        
             for similar_each in id_list:
                 similar_total.append((movie_id, similar_each))
+                total_list.append((movie_id, similar_each))
     
-        
-        
-        for write_each in similar_total:
-            w.writerows([write_each])
+        time.sleep(0.3)
+
+    for item in total_list:
+        a=item[0]
+        b=item[1]
+        if ((b,a) in total_list) and a>b:
+            total_list.remove(item)
+
+    for write_each in total_list:
+        w.writerows([write_each])
+
+print(len(total_list))
 
