@@ -78,10 +78,8 @@ from movies;
 
 -- [insert your SQL statement(s) BELOW this line]
 
-select t.*
-from (SELECT * FROM movies ORDER BY score DESC LIMIT 7) as t
-order by t.name;
-
+SELECT * FROM movies ORDER BY score DESC, name
+LIMIT 7;
 
 -- [insert your SQL statement(s) ABOVE this line]
 
@@ -94,8 +92,15 @@ order by t.name;
 
 -- [insert your SQL statement(s) BELOW this line]
 
-
-
+SELECT
+    cast_id, cast_name, count(movie_id) as movie_count
+FROM
+    movie_cast
+GROUP BY
+    cast_id    
+ORDER BY
+    movie_count desc, cast_name
+limit 5;
 
 -- [insert your SQL statement(s) ABOVE this line]
 
@@ -107,8 +112,23 @@ order by t.name;
 -- (f) Get high scoring actors
 
 -- [insert your SQL statement(s) BELOW this line]
+ 
+
+SELECT
+    cast_id, cast_name, 
+    AVG(CASE WHEN movies.score>50 THEN movies.score END)as avgerage_score
 
 
+FROM movie_cast
+left JOIN movies ON movie_cast.movie_id = movies.id
+
+GROUP BY
+cast_id
+HAVING count(movie_id)>2
+
+ORDER BY avgerage_score DESC, cast_name
+
+limit 10;
 
 
 -- [insert your SQL statement(s) ABOVE this line]
@@ -122,7 +142,13 @@ order by t.name;
 
 -- [insert your SQL statement(s) BELOW this line]
 
+CREATE VIEW good_collaboration AS
 
+SELECT *
+FROM movies
+FULL OUTER JOIN movie_cast ON movies.id = movie_cast.cast_id
+
+limit 10;
 
 
 -- [insert your SQL statement(s) ABOVE this line]
