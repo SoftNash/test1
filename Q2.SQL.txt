@@ -142,13 +142,23 @@ limit 10;
 
 -- [insert your SQL statement(s) BELOW this line]
 
-CREATE VIEW good_collaboration AS
+create view good_collaboration as
 
-SELECT *
-FROM movies
-FULL OUTER JOIN movie_cast ON movies.id = movie_cast.cast_id
+select cast_member_id1, cast_member_id2, movie_count, average_movie_score
+from (SELECT A.cast_id as cast_member_id1, B.cast_id as cast_member_id2, count(A.movie_id) as movie_count, round(avg(movies.score), 1) as average_movie_score
 
-limit 10;
+FROM movie_cast A, movie_cast B, movies
+
+WHERE A.movie_id = B.movie_id
+AND A.movie_id = movies.id
+group by cast_member_id1,cast_member_id2)
+
+WHERE cast_member_id1<cast_member_id2 
+AND movie_count>=3
+And average_movie_score>=40
+
+order by movie_count
+;
 
 
 -- [insert your SQL statement(s) ABOVE this line]
